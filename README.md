@@ -45,23 +45,23 @@ Click on [this link](https://console.weaviate.cloud/) and follow instructions to
 
 Once you create and account and login, you will a screen like this:
 
-<img src='../misc/weaviate_home_screen.png' width=500>
+<img src='./misc/weaviate_home_screen.png' width=500>
 
 Under _Free Sandbox_ tab, click on **Create cluster** button, provide a meaningful name to your cluster and then click on **Create**. Make sure the _Enable Authentication_ option is checked. Please note that the cluter will stay up only for 14 days for a free-tier account. If you would like to preserve the vector database beyond 2 weeks, you'd have to purchase a paid plan.
 
-<img src='../misc/weaviate_create_cluster.png' width=500>
+<img src='./misc/weaviate_create_cluster.png' width=500>
 
 A few minutes after you are done with creating a new cluster, you will see it appear on your main page. There should be a green check-mark on it.
 
-<img src='../misc/weaviate_cluster_created.png' width=500>
+<img src='./misc/weaviate_cluster_created.png' width=500>
 
 Now we need to create an API key to authenticate access. Click on the **Details** button (shown in the image above), and follow instructions to create an API key. Copy the API key. We will use the `.env_template` file to store this API key. This is the content of this template file:
 
-<img src='../misc/env_template.png' width=400>
+<img src='./misc/env_template.png' width=400>
 
 Rename the `.env_template` file to `.env`, and add the Weaviate URL (which can be found under the **Details** tab; see below) and the API key that you just copied.
 
-<img src='../misc/weaviate_cluster_url.png' width=500>
+<img src='./misc/weaviate_cluster_url.png' width=500>
 
 > Suggested Reading: Familiarize yourself with some [Weaviate core concepts](https://weaviate.io/developers/weaviate/concepts)
 
@@ -77,7 +77,7 @@ Note that you should run the command from the root directory of the project (i.e
 
 This script simply calls the `get_client()` function from the `utils.py` module. The function (see below) contains code to use the correct authentication keys and initializes a connection with the vector database. 
 
-<img src='../misc/code_get_client.png' width=500>
+<img src='./misc/code_get_client.png' width=500>
 
 **Note:** For now, we call this function with `openai=False` because we are just interested in ensuring connectivity with the cluster. Later on, we will initialize this connection _with_ the OpenAI API key because we will need it for creating text embeddings.
 
@@ -105,7 +105,7 @@ We will use OpenAI's `text-embedding-ada-002` embedding model (which is the defa
 
 We will read the Books dataset from the `./data` directory and then clean the database just in case the **Books** class already exists. Note that if you are running this for the first time, you don't need to run this "clean-up" part because the database is empty. But you may need to run this code multiple times (e.g., if you get some errors), in which case it would be a good practice to perform a clean-up before populating/repopulating the database.
 
-<img src='../misc/code_read_data.png' width=600>
+<img src='./misc/code_read_data.png' width=600>
 
 Note that I am using "Books" as the name of the schema (see below); if you used a different name, you should change that in this code.
 
@@ -122,23 +122,23 @@ Now let's create a schema, called "Books" and provide some important details suc
 
 ## 2 (b): Configure the schema.
 
-<img src='../misc/code_books_schema.png' width=500>
+<img src='./misc/code_books_schema.png' width=500>
 
 Now let's set up some `properties` for this schema (see below). We will set `text2vec-openai[skip]` to `True` for both `bookId` and `title` because we are not going to convert them into text embeddings. We will set it to `False` for the `description` field. In addition, we will also set it to `False` for the `genres` field. This way, we will be creating text embeddings for both the `description` and `genres` field, both of which will be converted into text embedding before loading them into the database.
 
-<img src='../misc/code_books_schema_properties.png' width=400>
+<img src='./misc/code_books_schema_properties.png' width=400>
 
 ## 2 (c): Create the schema.
 
 The following line of code finally creates an empty schema in the database called "Books":
 
-<img src='../misc/code_create_schema.png' width=300>
+<img src='./misc/code_create_schema.png' width=300>
 
 ## 2 (d): Load data into that schema.
 
 Now that an empty schema has been created, it's time to load it up with some embeddings! We will do this in batches. Our dataset is pretty small, so we will use a batch size of 10. You can read more about batch import on [this link](https://weaviate.io/developers/weaviate/manage-data/import). 
 
-<img src='../misc/code_batch_import.png' width=420>
+<img src='./misc/code_batch_import.png' width=420>
 
 Note that I have added a `try` and `except` clause because some of the entries from the dataset were causing issues. I think this was due to some empty (null) values as well as some foreign language content in the description column. You may see some warnings as well, but as long as this doesn't error out, you should be fine.
 
@@ -146,7 +146,7 @@ If all worked well, you should now have a vector database deployed in the cloud!
 
 Now if you go back to your Weaviate console, and click on the **Details** button, you will see that the database is now populated with some objects.
 
-<img src='../misc/weaviate_database_objects.png' width=400>
+<img src='./misc/weaviate_database_objects.png' width=400>
 
 Please note that due to some data quality and/or OpenAI API related issues, the total number of objects (aka embeddings) is only around sixteen thousand. This is happening due to the following JSON error: `An exception occurred: Out of range float values are not JSON compliant`. We will ignore this for now and continue to the next steps with these embeddings in the database.
 
@@ -162,7 +162,7 @@ In Weaviate, we can perform a keyword search using "BM25 (Best match 25)" algori
 
 > Suggested Reading: Check out [this article](https://medium.com/@evertongomede/understanding-the-bm25-ranking-algorithm-19f6d45c6ce) on BM25.
 
-<img src='../misc/code_keyword_search.png' width=450>
+<img src='./misc/code_keyword_search.png' width=450>
 
 You can run this script by using the following command:
 
@@ -226,7 +226,7 @@ It's pretty simple!
 
 The function that performs this vector search is located in `src/vector_search.py` file:
 
-<img src='../misc/code_vector_search.png' width=500>
+<img src='./misc/code_vector_search.png' width=500>
 
 We search in the **Books** schema, and ask for the following four fields in the search results: `bookId`, `title`, `genres`, and `description`. We provide the keyword with the `concepts` parameter inside `with_near_text()` option. This is the search phrase that will be converted into a query embedding and then compared against all text embeddings we have in the database using a similarity search. We restrict the search results to three, and as also ask the cosine similarity distance measure to be returned with the query results.
 
@@ -246,19 +246,19 @@ Our app is very light. It will have a single web page, with a text input area wh
 
 First, we need a title and a subtitle text for the page. Let's set them up using `title()` and `write()`. Note that we can use the two colon format to include emojis, e.g., `:books:` will display an emoji for books.
 
-<img src='../misc/code_app_title.png' width=450>
+<img src='./misc/code_app_title.png' width=450>
 
 Now let's create a user input area where user can type in the search phrase. We do this by creating a Streamlit "form" called **book-search** and we create a user-input area using the `text_input()` property of this form. We also add a **Submit** button at the bottom of this form.
 
-<img src='../misc/code_app_user_input.png' width=500>
+<img src='./misc/code_app_user_input.png' width=500>
 
 Based on this code, this is what our app would look like (once launched):
 
-<img src='../misc/app_title.png' width=500>
+<img src='./misc/app_title.png' width=500>
 
 The next step is to grab the text input entered by the user and call the vector search to retrieve results. Here's the code:
 
-<img src='../misc/code_app_submit.png' width=500>
+<img src='./misc/code_app_submit.png' width=500>
 
 The code will run only if the user clicks the submit button. We first need to initialize a connection the vector dataset. We do this in line # 24. Then we call the `vector_search()` function along with the client and the search phrase (aka the "query").
 
@@ -270,13 +270,13 @@ Now the original dataset does contain a column called `coverImg` that contains a
 
 In the second colum, called `text_col`, we simply write the book title and description. Note that we could have grabbed these two values from the `df` dataset, but we already have them available in the search results. We also include the `distance` value at the top for reference. Note that lower values indicate better matches, and the results are sorted from low to high distance scores. Here's one example of search result for the search phrase ""
 
-<img src='../misc/app_sample_result.png' width=500>
+<img src='./misc/app_sample_result.png' width=500>
 
 You can launch this app by running the following command: `streamlit run src/app.py`. 
 
 That should print a pair of local and network URLs as shown below. You can Ctrl+Click on either one to launch the app in you browser.
 
-<img src='../misc/app_launch.png' width=500>
+<img src='./misc/app_launch.png' width=500>
 
 And you should be able to perform a search and view the results! Congratulations! :)
 
