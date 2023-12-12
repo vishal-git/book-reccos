@@ -8,9 +8,9 @@ Please note that this is a very detailed tutorial :) so feel free to skip over s
 
 Here's the list of all tools we will use for this project:
 
-1. Vector database provided by Weaviate
-2. OpenAI API for creating embeddings
-3. Streamlit for the web-app frontend and backend
+1. A **vector database** provided by Weaviate
+2. **OpenAI API** for creating embeddings
+3. **Streamlit** for the web-app frontend and backend
 
 # Sources
 
