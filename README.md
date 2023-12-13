@@ -1,25 +1,25 @@
 # A Tutorial to create a simple book-search app using a vector database deplyed on Weaviate
 
-This tutorial will walk you step-by-step to create a local app that can be used to search books (from a collection) based on a search phrase. We will use a vector database from Weaviate to store the vector embeddings for book descriptions and genres. We will also make a call to OpenAI API to convert the search query into an embedding before performing vector similarity search to identify the best matches.
+This tutorial will walk you through a step-by-step process to create a local web-app that can be used to search books (from a collection) based on search phrases. We will use a **vector database** from [Weaviate](https://weaviate.io/) to store the vector embeddings for book descriptions and genres. We will also make a call to OpenAI API to convert the search query into an embedding before performing vector similarity search to identify the best matches.
 
 Please note that this is a very detailed tutorial :) so feel free to skip over some sections if you are already familiar with those concepts/processes covered in those sections.
 
-# Tools
+# Tools :hammer_and_wrench:
 
 Here's the list of all tools we will use for this project:
 
-1. A **vector database** provided by Weaviate
-2. **OpenAI API** for creating embeddings
-3. **Streamlit** for the web-app frontend and backend
+1. A **vector database** provided by [Weaviate](https://weaviate.io/)
+2. [OpenAI API](https://platform.openai.com/docs/introduction) for creating **embeddings**
+3. [Streamlit](https://streamlit.io/) for the **web-app frontend and backend**
 
-# Sources
+# Sources :point_left:
 
 * [The Books dataset](https://github.com/scostap/goodreads_bbe_dataset) contains details for more than 63,000 books.
 * [A Movie Search Engine tutorial](https://towardsdatascience.com/recreating-andrej-karpathys-weekend-project-a-movie-search-engine-9b270d7a92e4)  by Leonie Monigatti
 * [Weaviate documentation and guidelines for search](https://weaviate.io/developers/weaviate/search)
 * [Streamlit API reference](https://docs.streamlit.io/library/api-reference)
 
-# Step 1: Set up
+# Step 1: Set up :building_construction:
 
 ## 1 (a): Clone this repo into your local directory.
 
@@ -37,17 +37,19 @@ source . .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Please note that I am using Python 3.10 for this project. (You can check your Python version using the following command: `python --version`.)
+Please note that I am using Python 3.10 for this project. You can check your Python version using the following command: `python --version`. If you have some other version, that might be okay, but just be aware.
 
 ## 1 (c): Create a free vector database on Weaviate.
 
-Click on [this link](https://console.weaviate.cloud/) and follow instructions to create a free-tier account. Then follow the instructions below to create a free vector database. [Please note that these steps may change in the future. For the latest instructions, you can check out their official documentation [here](https://weaviate.io/developers/wcs/quickstart).
+Click on [this link](https://console.weaviate.cloud/) and create a free-tier account.
+
+Then follow the instructions below to create a vector database. Please note that these steps may change in the future. For the latest instructions, you can check out their official documentation [here](https://weaviate.io/developers/wcs/quickstart).
 
 Once you create and account and login, you will a screen like this:
 
 <img src='./misc/weaviate_home_screen.png' width=500>
 
-Under _Free Sandbox_ tab, click on **Create cluster** button, provide a meaningful name to your cluster and then click on **Create**. Make sure the _Enable Authentication_ option is checked. Please note that the cluter will stay up only for 14 days for a free-tier account. If you would like to preserve the vector database beyond 2 weeks, you'd have to purchase a paid plan.
+Under _Free Sandbox_ tab, click on **Create cluster** button, provide a meaningful name to your cluster and then click on **Create**. Make sure the _Enable Authentication_ option is checked. Please note that the cluter will stay up only for 14 days for a free-tier account. If you would like to preserve the vector database beyond two weeks, you'd have to purchase a paid plan.
 
 <img src='./misc/weaviate_create_cluster.png' width=500>
 
@@ -55,7 +57,7 @@ A few minutes after you are done with creating a new cluster, you will see it ap
 
 <img src='./misc/weaviate_cluster_created.png' width=500>
 
-Now we need to create an API key to authenticate access. Click on the **Details** button (shown in the image above), and follow instructions to create an API key. Copy the API key. We will use the `.env_template` file to store this API key. This is the content of this template file:
+Now we need to create an API key to authenticate access. Click on the **Details** button (shown in the image above), and follow instructions to create an API key. Copy the API key. We will use the `.env_template` file (that's available in the root folder of this project repo) to store this API key. Here's what the template file looks like:
 
 <img src='./misc/env_template.png' width=400>
 
@@ -63,11 +65,11 @@ Rename the `.env_template` file to `.env`, and add the Weaviate URL (which can b
 
 <img src='./misc/weaviate_cluster_url.png' width=500>
 
-> Suggested Reading: Familiarize yourself with some [Weaviate core concepts](https://weaviate.io/developers/weaviate/concepts)
+> Suggested Reading: Before moving on, you might want to familiarize yourself with some [Weaviate core concepts](https://weaviate.io/developers/weaviate/concepts)
 
 ## 1 (d): Check connectivity to the vector database.
 
-Let's make sure that we are able to connect to the Weaviate cluster via Python. We can use the `check_client.py` script for this purpose. This script will read the information from the `.env` file and try to connect to the cluster. You can run the script using the following command:
+Let's make sure that we are able to connect to the Weaviate cluster via Python. We can use the `check_client.py` script for this purpose. This script will read the information from the `.env` file and establish a connection to the cluster. You can run the script using the following command:
 
 ```
 python src/check_client.py
@@ -93,9 +95,9 @@ Click on [this link](https://platform.openai.com/) to visit the OpenAI website a
 
 If you would like to use a free option instead, you can use an open-source model from [HuggingFace](https://huggingface.co/blog/getting-started-with-embeddings). If you decide to do this, you will need to add the HuggingFace API key in `.env` and you will also need to change the way the client connection is invoked in `utils.py`.
 
-# Step 2: Generate and store embeddings into the vector database. 
+# Step 2: Generate and store embeddings into the vector database. :file_folder:
 
-As mentioned earlier, we will use the Books dataset for this purpose. But feel free to use any other dataset that you might be interested in, such as movies, shows, products. All we really need is a text column that contains the description of those items. We will first convert these text descriptions into text embeddings and then store them into our vector database.
+As mentioned earlier, we will use the Books dataset for this purpose. But feel free to use any other dataset that you might be interested in, such as movies, shows, or podcasts. All we really need is a text column that contains the description of those items. We will first convert these text descriptions into text embeddings and then store them into our vector database.
 
 > Suggested Reading: Check out the [OpenAI documentation on embeddings](https://platform.openai.com/docs/guides/embeddings/what-are-embeddings).
 
@@ -103,7 +105,7 @@ We will use OpenAI's `text-embedding-ada-002` embedding model (which is the defa
 
 ## 2 (a): Read the Books dataset.
 
-We will read the Books dataset from the `./data` directory and then clean the database just in case the **Books** class already exists. Note that if you are running this for the first time, you don't need to run this "clean-up" part because the database is empty. But you may need to run this code multiple times (e.g., if you get some errors), in which case it would be a good practice to perform a clean-up before populating/repopulating the database.
+We will read the Books dataset from the `./data` directory. Before moving on, we will clean the vector database just in case the **Books** class already exists. Note that if you are running this for the first time, you don't need to run this "clean-up" part because the database would be empty. But you may need to run this code multiple times (e.g., if you get some errors), in which case it would be a good practice to perform a clean-up before populating/repopulating the database.
 
 <img src='./misc/code_read_data.png' width=600>
 
@@ -118,13 +120,17 @@ Now let's create a schema, called "Books" and provide some important details suc
 * `vectorIndexConfig`: We will use cosine similarity to compare the text embedding with the query embedding
 * `moduleConfig`: Here we provide some more details about the vectorizer; check out [this link](https://weaviate.io/developers/weaviate/manage-data/collections#specify-vectorizer-settings) for more details
 
-[This](https://weaviate.io/developers/weaviate/manage-data/collections) page provides more information about additional configurations, such as sharding. 
+<img src='./misc/code_books_schema.png' width=500>
+
+If you're interested, check out [this](https://weaviate.io/developers/weaviate/manage-data/collections) page that provides information about some additional configurations, such as sharding. 
 
 ## 2 (b): Configure the schema.
 
-<img src='./misc/code_books_schema.png' width=500>
-
-Now let's set up some `properties` for this schema (see below). We will set `text2vec-openai[skip]` to `True` for both `bookId` and `title` because we are not going to convert them into text embeddings. We will set it to `False` for the `description` field. In addition, we will also set it to `False` for the `genres` field. This way, we will be creating text embeddings for both the `description` and `genres` field, both of which will be converted into text embedding before loading them into the database.
+Now let's set up some `properties` for this schema (see below).
+* We will set `text2vec-openai[skip]` to `True` for both `bookId` and `title` because we are not going to convert them into text embeddings.
+* We will set it to `False` for the `description` field (because we _do_ want to create embeddings for this column).
+* In addition, we will also set it to `False` for the `genres` field.
+* This way, we will be creating text embeddings for both the `description` and `genres` field, both of which will be converted into text embedding before loading them into the database.
 
 <img src='./misc/code_books_schema_properties.png' width=400>
 
@@ -136,11 +142,11 @@ The following line of code finally creates an empty schema in the database calle
 
 ## 2 (d): Load data into that schema.
 
-Now that an empty schema has been created, it's time to load it up with some embeddings! We will do this in batches. Our dataset is pretty small, so we will use a batch size of 10. You can read more about batch import on [this link](https://weaviate.io/developers/weaviate/manage-data/import). 
+Now that an empty schema has been created, it's time to load it up with some embeddings! We will do this in batches. Our dataset is pretty small, so we will use a batch size of 50. You can read more about batch import on [this link](https://weaviate.io/developers/weaviate/manage-data/import). 
 
 <img src='./misc/code_batch_import.png' width=420>
 
-Note that I have added a `try` and `except` clause because some of the entries from the dataset were causing issues. I think this was due to some empty (null) values as well as some foreign language content in the description column. You may see some warnings as well, but as long as this doesn't error out, you should be fine.
+Note that I have added a `try` and `except` clause because some of the entries from the dataset were causing issues. I think this was due to some empty (null) values as well as some foreign language content in the description column. You may see some warnings as well while running this code, but as long as this doesn't error out, you should be fine.
 
 If all worked well, you should now have a vector database deployed in the cloud! Congratulations!
 
@@ -150,7 +156,7 @@ Now if you go back to your Weaviate console, and click on the **Details** button
 
 Please note that due to some data quality and/or OpenAI API related issues, the total number of objects (aka embeddings) is only around sixteen thousand. This is happening due to the following JSON error: `An exception occurred: Out of range float values are not JSON compliant`. We will ignore this for now and continue to the next steps with these embeddings in the database.
 
-# Step 3: Perform book search.
+# Step 3: Perform book search. :eyes:
 
 Now that we have a database full of vectors ready, we can perform search and retrieve relevant books.
 
@@ -158,11 +164,15 @@ Now that we have a database full of vectors ready, we can perform search and ret
 
 ## 3(a): Keyword search.
 
-In Weaviate, we can perform a keyword search using "BM25 (Best match 25)" algorithm. This algorithm has some limitations -- namely, it doesn't consider semantic meanings and its heavy reliance on term frequency -- but we will try it as our first shot at getting some book recommendations from the vector database.
+Let's start with a simple keyword-based search first. In Weaviate, we can perform a keyword search using "BM25 (Best match 25)" algorithm. This algorithm has some limitations -- namely, it doesn't consider semantic meanings and its heavy reliance on term frequency -- but we will try it as our first shot at getting some book recommendations from the vector database.
 
 > Suggested Reading: Check out [this article](https://medium.com/@evertongomede/understanding-the-bm25-ranking-algorithm-19f6d45c6ce) on BM25.
 
+Here's the code that performs this keyword-based search:
+
 <img src='./misc/code_keyword_search.png' width=450>
+
+We are looking for up to three recommendations based on the search keyword 'magic'. We look for this keyword in the `description` field. And we aks the query to return three fields: `title`, `genre`, and `description`. We also ask for an additional attribute called `score`, aka the search similarity score. Feel free to change the keyword and play around with it a little.
 
 You can run this script by using the following command:
 
@@ -170,7 +180,7 @@ You can run this script by using the following command:
 python src/keyword_search.py
 ```
 
-This code searched for the top three recommendations for the search word "magic". Here are the three results that I got:
+This code searches for the top three recommendations for the search word "magic". Here are the three results that I got:
 
 ```
 {
@@ -207,9 +217,9 @@ This code searched for the top three recommendations for the search word "magic"
 }
 ```
 
-We can see that, since this is a *literal* keyword search (and not a semantic one), we get three recommendations whose descriptions (or genres) contain the search word "magic".
+Since this is a *literal* keyword search, and not a semantic one, we get three recommendations whose descriptions (or genres) specifically _contain_ the search word "magic".
 
-Since we also requested the `score` in our query, we see that these scores are provided in an attribute called `_additional`. The higher the score, the better the match. Hence, the results are sorted from high to low scores.
+Note that we had also requested the `score` in our query, we see that these scores are provided in an attribute called `_additional`. The higher the score, the better the match. Hence, the results are sorted from high to low scores.
 
 ## 3(b): Vector search.
 
@@ -234,11 +244,15 @@ In line #18 above, we convert the response into JSON format. Since our database 
 
 Finally, we convert the response into a Python list and apply a filter to discard any results that have a distance score higher than 0.2. This threshold value seems to be working well based on a few examples that I checked. Feel free to change it if needed -- especially if we decided to use a different dataset. You can remove this threshold first, increase the value for `with_limit()` (line #11) and check out the search results to find a more appropriate threshold.
 
-You can perform some search by directly running the `src/vector_search.py` file and changing the search phrase in line #39 of this script. 
+You can perform some sample searches by directly running the `vector_search.py` file after changing the search phrase in line #39 of this script. 
 
-# Step 4: Create an app.
+```
+python src/vector_search.py
+```
 
-Okay, now let's create an web-app using **Streamlit**. The app can be launched locally in a brower where a user can perform a search and see the results.   
+# Step 4: Create an app. :rocket:
+
+Okay, now let's create an web-app using **Streamlit**. Once ready, we will launch this app locally in a brower where you can perform a search and view the results.   
 
 > Suggested Reading: You might want to familarize yourself with some basic Streamlit concepts on this [documentation page](https://docs.streamlit.io/library/get-started). 
 
@@ -272,11 +286,15 @@ In the second colum, called `text_col`, we simply write the book title and descr
 
 <img src='./misc/app_sample_result.png' width=500>
 
-You can launch this app by running the following command: `streamlit run src/app.py`. 
+You can launch this app by running the following command:
+
+```
+streamlit run src/app.py`. 
+```
 
 That should print a pair of local and network URLs as shown below. You can Ctrl+Click on either one to launch the app in you browser.
 
 <img src='./misc/app_launch.png' width=500>
 
-And you should be able to perform a search and view the results! Congratulations! :)
+Once the app launches in a browser, you should be able to perform a search and view the results! Congratulations! :)
 
