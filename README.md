@@ -1,6 +1,6 @@
-# A Tutorial to create a simple book-search app using a vector database deplyed on Weaviate
+# A tutorial to create a simple book-search app using a vector database deployed on Weaviate
 
-This tutorial will walk you through a step-by-step process to create a local web-app that can be used to search books (from a collection) based on search phrases. We will use a **vector database** from [Weaviate](https://weaviate.io/) to store the vector embeddings for book descriptions and genres. We will also make a call to OpenAI API to convert the search query into an embedding before performing vector similarity search to identify the best matches.
+This beginner-friendly tutorial will walk you through a step-by-step process to create a local web-app that can be used to search books (from a collection) based on search phrases. We will use a **vector database** from [Weaviate](https://weaviate.io/) to store the vector embeddings for book descriptions and genres. We will also make a call to OpenAI API to convert the search query into an embedding before performing vector similarity search to identify the best matches.
 
 Please note that this is a very detailed tutorial :) so feel free to skip over some sections if you are already familiar with those concepts/processes covered in those sections.
 
