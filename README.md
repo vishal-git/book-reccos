@@ -1,4 +1,4 @@
-# A tutorial to create a simple book-search app using a vector database deployed on Weaviate
+# A tutorial to create a simple book recommendation app using a vector database deployed on Weaviate
 
 This beginner-friendly tutorial will walk you through a step-by-step process to create a local web-app that can be used to search books (from a collection) based on search phrases. We will use a **vector database** from [Weaviate](https://weaviate.io/) to store the vector embeddings for book descriptions and genres. We will also make a call to OpenAI API to convert the search query into an embedding before performing vector similarity search to identify the best matches.
 
@@ -10,7 +10,7 @@ Here's the list of all tools we will use for this project:
 
 1. A **vector database** provided by [Weaviate](https://weaviate.io/)
 2. [OpenAI API](https://platform.openai.com/docs/introduction) for creating **embeddings**
-3. [Streamlit](https://streamlit.io/) for the **web-app frontend and backend**
+3. [Streamlit](https://streamlit.io/) as the framework for the **web-app**
 
 # Sources :point_left:
 
