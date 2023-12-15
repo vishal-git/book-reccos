@@ -33,7 +33,7 @@ Here are the commands you can run to (a) create a Python virtual environment, (b
 
 ```
 python -m venv .venv
-source . .venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
